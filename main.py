@@ -21,7 +21,7 @@ from src.factories import (
     get_transform,
 )
 from src.trainer.trainer import Trainer
-from src.utils.seed import set_seed
+from src.utilsfolder.seed import set_seed
 
 LOGGER = logging.getLogger(name=__file__)
 LOGGER.setLevel(logging.INFO)
@@ -82,18 +82,22 @@ def main(cfg: OmegaConf) -> None:
     data.truncate_text(cfg.data.max_length)
     data.transform_text(text_transform.batch_transform)
 
+    logging.info("data transformed")
+
     lookups = get_lookups(
         config=cfg.lookup,
         data=data,
         label_transform=label_transform,
         text_transform=text_transform,
     )
-
+    logging.info("got lookups")
     model = get_model(
         config=cfg.model, data_info=lookups.data_info, text_encoder=text_encoder
     )
+    logging.info("model loaded")
     model.to(device)
-
+    
+    logging.info("model to device")
     # print data info
     pprint(lookups.data_info)
 
@@ -103,6 +107,7 @@ def main(cfg: OmegaConf) -> None:
         code_system2code_indices=lookups.code_system2code_indices,
         split2code_indices=lookups.split2code_indices,
     )
+    logging.info("got metrics")
     datasets = get_datasets(
         config=cfg.dataset,
         data=data,
@@ -110,7 +115,7 @@ def main(cfg: OmegaConf) -> None:
         label_transform=label_transform,
         lookups=lookups,
     )
-
+    logging.info("got datasets")
     dataloaders = get_dataloaders(config=cfg.dataloader, datasets_dict=datasets)
     optimizer = get_optimizer(config=cfg.optimizer, model=model)
     accumulate_grad_batches = int(
@@ -139,7 +144,7 @@ def main(cfg: OmegaConf) -> None:
         lookups=lookups,
         accumulate_grad_batches=accumulate_grad_batches,
     ).to(device)
-
+    logging.info("trainer")
     if cfg.load_model:
         trainer.experiment_path = Path(cfg.load_model)
 
