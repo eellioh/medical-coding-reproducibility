@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from sklearn.metrics import auc, average_precision_score, roc_curve
 
-from src.utils import detach
+from src.utilsfolder import detach
 
 
 class Metric:

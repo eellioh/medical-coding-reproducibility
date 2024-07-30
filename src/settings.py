@@ -9,10 +9,10 @@ TARGET_COLUMN = "target"
 SUBJECT_ID_COLUMN = "subject_id"
 
 DOWNLOAD_DIRECTORY_MIMICIII = (
-    "path/to/mimiciii"  # Path to the MIMIC-III data. Example: ~/mimiciii/1.4
+    "~/Desktop/mimic-iii-1.4"  # Path to the MIMIC-III data. Example: ~/mimiciii/1.4
 )
-DOWNLOAD_DIRECTORY_MIMICIV = "path/to/mimiciv"  # Path to the MIMIC-IV data. Example: ~/physionet.org/files/mimiciv/2.2
-DOWNLOAD_DIRECTORY_MIMICIV_NOTE = "path/to/mimiciv-note"  # Path to the MIMIC-IV-Note data. Example: ~/physionet.org/files/mimic-iv-note/2.2
+DOWNLOAD_DIRECTORY_MIMICIV = "~/Desktop/mimic/mimic-iv-2.2"  # Path to the MIMIC-IV data. Example: ~/physionet.org/files/mimiciv/2.2
+DOWNLOAD_DIRECTORY_MIMICIV_NOTE = "~/Desktop/mimic/mimic-iv-note-deidentified-free-text-clinical-notes-2.2/"  # Path to the MIMIC-IV-Note data. Example: ~/physionet.org/files/mimic-iv-note/2.2
 
 
 DATA_DIRECTORY_MIMICIII_FULL = OmegaConf.load("configs/data/mimiciii_full.yaml").dir

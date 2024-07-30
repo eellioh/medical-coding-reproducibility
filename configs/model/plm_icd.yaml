@@ -1,4 +1,5 @@
 name: PLMICD
 configs:
-  model_path: RoBERTa-base-PM-M3-Voc/RoBERTa-base-PM-M3-Voc-hf
-
+  model_path: model_checkpoints/mimiciii_clean/plm-icd #RoBERTa-base-PM-M3-Voc/RoBERTa-base-PM-M3-Voc-hf
+  #model_path: model_checkpoints/mimiciv_icd10/plm-icd #RoBERTa-base-PM-M3-Voc/RoBERTa-base-PM-M3-Voc-hf
+  #model_path: RoBERTa-base-PM-M3-Voc/RoBERTa-base-PM-M3-Voc-hf

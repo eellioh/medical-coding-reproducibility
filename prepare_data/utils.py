@@ -1,14 +1,16 @@
 import logging
+import sys
 from collections import Counter
 from functools import partial
 from pathlib import Path
 from typing import Optional
+import code 
 
 import pandas as pd
 import vaex
 import wget
-
-from src.settings import ID_COLUMN, SUBJECT_ID_COLUMN, TARGET_COLUMN, TEXT_COLUMN
+sys.path.insert(0, '/Users/paulj/Documents/GitHub/medical-coding-reproducibility/src')
+from settings import ID_COLUMN, SUBJECT_ID_COLUMN, TARGET_COLUMN, TEXT_COLUMN
 
 
 def make_version_dir(output_dir: Path) -> Path:
@@ -403,9 +405,14 @@ class TextPreprocessor:
 def preprocess_documents(
     df: pd.DataFrame, preprocessor: TextPreprocessor
 ) -> pd.DataFrame:
+    i=0
     with vaex.cache.memory_infinite():  # pylint: disable=not-context-manager
-        df = vaex.from_pandas(df)
+        i+=1
+        #df = vaex.from_pandas(df)
+        print(i)
         df = preprocessor(df)
         df["num_words"] = df.text.str.count(" ") + 1
         df["num_targets"] = df[TARGET_COLUMN].apply(len)
-        return df.to_pandas_df()
+        logging.info("Exiting preprocess_documents")
+        #code.interact(local=locals())
+        return df

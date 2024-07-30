@@ -17,7 +17,7 @@
 import torch
 import torch.utils.checkpoint
 from torch import nn
-
+import logging
 from transformers import RobertaModel, AutoConfig
 
 from src.models.modules.attention import LabelAttention
@@ -29,15 +29,33 @@ class PLMICD(nn.Module):
         self.config = AutoConfig.from_pretrained(
             model_path, num_labels=num_classes, finetuning_task=None
         )
-        self.roberta = RobertaModel(
-            self.config, add_pooling_layer=False
-        ).from_pretrained(model_path, config=self.config)
+        logging.info("init plmicd step 1")
+        self.roberta = RobertaModel(self.config, add_pooling_layer=False)
+        logging.info(model_path)
+        self.roberta = self.roberta.from_pretrained(model_path, config=self.config) #STALLS OUT HERE
+        logging.info("init plmicd step 3")
         self.attention = LabelAttention(
             input_size=self.config.hidden_size,
             projection_size=self.config.hidden_size,
             num_classes=num_classes,
         )
         self.loss = torch.nn.functional.binary_cross_entropy_with_logits
+    # def __init__(self, config):
+    #     super().__init__(config)
+    #     self.num_labels = config.num_labels
+    #     self.model_mode = config.model_mode
+    #     self.roberta = RobertaModel(config, add_pooling_layer=False)
+    #     self.dropout = nn.Dropout(config.hidden_dropout_prob)
+    #     if "cls" in self.model_mode:
+    #         self.classifier = nn.Linear(config.hidden_size, config.num_labels)
+    #     elif "laat" in self.model_mode:
+    #         self.first_linear = nn.Linear(config.hidden_size, config.hidden_size, bias=False)
+    #         self.second_linear = nn.Linear(config.hidden_size, config.num_labels, bias=False)
+    #         self.third_linear = nn.Linear(config.hidden_size, config.num_labels)
+    #     else:
+    #         raise ValueError(f"model_mode {self.model_mode} not recognized")
+
+    #     self.init_weights()
 
     def get_loss(self, logits, targets):
         return self.loss(logits, targets)

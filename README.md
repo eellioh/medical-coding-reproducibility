@@ -44,7 +44,7 @@ This code has been developed on MIMIC-III v1.4.
 2. Open the file `src/settings.py`
 3. Change the variable `DOWNLOAD_DIRECTORY_MIMICIII` to the path of your downloaded data `path/to/mimiciii`
 4. If you want to use the MIMIC-III full and MIMIC-III 50 from the [Explainable Prediction of Medical Codes from Clinical Text](https://aclanthology.org/N18-1100/) you need to run `python prepare_data/prepare_mimiciii_mullenbach.py`
-5. If you want to use MIMIC-III clean from our paper you need to run `python prepare_data/prepare_mimiciii.py`
+5. If you want to use MIMIC-III clean from our paper you need to run `python prepare_data/prepare_mimiciii_clean.py` 
 
 ### Prepare MIMIC-IV
 This code has been developed on MIMIC-IV and MIMIC-IV v2.2. 
@@ -76,7 +76,7 @@ Evaluate PLM-ICD on MIMIC-IV ICD-10 on GPU 1: `python main.py experiment=mimiciv
 
 ## Overview of the repository
 #### configs
-We use [Hydra](https://hydra.cc/docs/intro/) for configurations. The condigs for every experiment is found in `configs/experiments`. Furthermore, the configuration for the sweeps are found in `configs/sweeps`. We used [Weights and Biases Sweeps](https://docs.wandb.ai/guides/sweeps) for most of our experiments.
+We use [Hydra](https://hydra.cc/docs/intro/) for configurations. The configs for every experiment is found in `configs/experiments`. Furthermore, the configuration for the sweeps are found in `configs/sweeps`. We used [Weights and Biases Sweeps](https://docs.wandb.ai/guides/sweeps) for most of our experiments.
 
 #### files
 This is where the images and data is stored.
@@ -103,6 +103,7 @@ I ran the experiments on one RTX 2080 Ti 11GB per experiment. I had 128 GB RAM o
 * LAAT and PLM-ICD are unstable. The loss will sometimes diverge during training. The issue seems to be overflow in the softmax function in the label-wise attention. Using batch norm or layer norm before the softmax function might solve the issue. We did not try to fix the issue as we didn't want to change the original method during our reproducibility.
 * The code was only tested on a server with 128 GB RAM. A user with 32 GB RAM reported issues fitting MIMIC-IV into memory.
 * There is an error in the collate function in the Huggingface dataset. The attention mask is being padded with 1s instead of 0s. I have not fixed this issue because I want people to be able to reproduce the results from the paper.
+* There is a bug with going from a vaex df to a pandas df.
 
 ## Acknowledgement
 Thank you Sotiris Lamprinidis for providing an efficient implementation of our multi-label stratification algorithm and some data preprocessing helper functions.

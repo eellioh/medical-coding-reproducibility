@@ -4,6 +4,7 @@ from typing import Any, Optional
 
 import numpy as np
 import torch
+import code
 from omegaconf import OmegaConf
 from rich.pretty import pprint
 from torch.utils.data import DataLoader
@@ -18,7 +19,9 @@ import src.trainer.callbacks as callbacks
 from src.data.datatypes import Data, Lookups
 from src.lookups import load_lookups
 from src.text_encoders.base_text_encoder import BaseTextEncoder
-
+import logging
+LOGGER = logging.getLogger(name=__file__)
+LOGGER.setLevel(logging.INFO)
 
 def get_lookups(
     config: OmegaConf,
@@ -37,7 +40,9 @@ def get_lookups(
 def get_model(
     config: OmegaConf, data_info: dict, text_encoder: Optional[Any] = None
 ) -> models.BaseModel:
+    logging.info("entered get_model")
     model_class = getattr(models, config.name)
+    code.interact(local=locals())
     return model_class(text_encoder=text_encoder, **data_info, **config.configs)
 
 
@@ -69,11 +74,13 @@ def get_lr_scheduler(
 def get_text_encoder(
     config: OmegaConf, data_dir: str, texts: list[str]
 ) -> text_encoders.BaseTextEncoder:
+    logging.info("entered get_text_encoder")
     if not hasattr(config, "name"):
         return None
-
+    logging.info("entered get_text_encoder and not returning None")
     path = Path(data_dir) / config.file_name
     text_encoder_class = getattr(text_encoders, config.name)
+    logging.info("get_text_encoder getattr")
     if path.exists() and config.load_model:
         return text_encoder_class.load(path)
 

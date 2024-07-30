@@ -16,7 +16,7 @@ from src.metrics import  MetricCollection
 from src.models import BaseModel
 from src.settings import ID_COLUMN, TARGET_COLUMN
 from src.trainer.callbacks import BaseCallback
-from src.utils.decision_boundary import f1_score_db_tuning
+from src.utilsfolder.decision_boundary import f1_score_db_tuning
 
 
 class Trainer:

@@ -10,7 +10,7 @@ from src.settings import (
     SUBJECT_ID_COLUMN,
     TARGET_COLUMN,
 )
-from src.utils.stratify_function import (
+from src.utilsfolder.stratify_function import (
     iterative_stratification,
     kl_divergence,
     labels_not_in_split,

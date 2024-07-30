@@ -20,8 +20,7 @@ hydra:
   output_subdir: null
 seed: 1337
 deterministic: false
-gpu:
-  - 6
+gpu: null
 name: null
 debug: false
 load_model: null # The path where to find the model, text encoder and label encoder

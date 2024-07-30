@@ -7,14 +7,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from prepare_data.utils import (
+from utils import (
     TextPreprocessor,
     load_gz_file_into_df,
     preprocess_documents,
     reformat_code_dataframe,
     reformat_icd,
 )
-from src.settings import (
+from settings import (
     DATA_DIRECTORY_MIMICIV_ICD9,
     DATA_DIRECTORY_MIMICIV_ICD10,
     DOWNLOAD_DIRECTORY_MIMICIV,
@@ -111,6 +111,7 @@ mimic_proc = load_gz_file_into_df(
 mimic_diag = load_gz_file_into_df(
     download_dir / "hosp/diagnoses_icd.csv.gz", dtype={"icd_code": str}
 )
+logging.info("Finished loading data")
 
 # Format the codes by adding decimal points
 mimic_proc["icd_code"] = mimic_proc.apply(
@@ -125,23 +126,25 @@ mimic_diag["icd_code"] = mimic_diag.apply(
     ),
     axis=1,
 )
-
+logging.info("Finished formatting codes")
 
 # Process codes and notes
 mimic_proc = parse_codes_dataframe(mimic_proc)
 mimic_diag = parse_codes_dataframe(mimic_diag)
 mimic_notes = parse_notes_dataframe(mimic_notes)
+logging.info("Processed codes and notes")
 
 # Merge the codes and notes into a icd9 and icd10 dataframe
 mimic_proc_9 = mimic_proc[mimic_proc["icd_version"] == 9]
 mimic_proc_9 = mimic_proc_9.rename(columns={"icd_code": "icd9_proc"})
 mimic_proc_10 = mimic_proc[mimic_proc["icd_version"] == 10]
 mimic_proc_10 = mimic_proc_10.rename(columns={"icd_code": "icd10_proc"})
-
+logging.info("Renamed procedures")
 mimic_diag_9 = mimic_diag[mimic_diag["icd_version"] == 9]
 mimic_diag_9 = mimic_diag_9.rename(columns={"icd_code": "icd9_diag"})
 mimic_diag_10 = mimic_diag[mimic_diag["icd_version"] == 10]
 mimic_diag_10 = mimic_diag_10.rename(columns={"icd_code": "icd10_diag"})
+logging.info("Renamed diagnoses")
 
 mimiciv_9 = mimic_notes.merge(
     mimic_proc_9[[ID_COLUMN, "icd9_proc"]], on=ID_COLUMN, how="left"
@@ -149,6 +152,7 @@ mimiciv_9 = mimic_notes.merge(
 mimiciv_9 = mimiciv_9.merge(
     mimic_diag_9[[ID_COLUMN, "icd9_diag"]], on=ID_COLUMN, how="left"
 )
+logging.info("Merged icd9")
 
 mimiciv_10 = mimic_notes.merge(
     mimic_proc_10[[ID_COLUMN, "icd10_proc"]], on=ID_COLUMN, how="left"
@@ -156,10 +160,12 @@ mimiciv_10 = mimic_notes.merge(
 mimiciv_10 = mimiciv_10.merge(
     mimic_diag_10[[ID_COLUMN, "icd10_diag"]], on=ID_COLUMN, how="left"
 )
+logging.info("Merged icd10")
 
 # remove notes with no codes
 mimiciv_9 = mimiciv_9.dropna(subset=["icd9_proc", "icd9_diag"], how="all")
 mimiciv_10 = mimiciv_10.dropna(subset=["icd10_proc", "icd10_diag"], how="all")
+logging.info("Removed notes with no codes")
 
 # convert NaNs to empty lists
 mimiciv_9["icd9_proc"] = mimiciv_9["icd9_proc"].apply(
@@ -174,25 +180,32 @@ mimiciv_10["icd10_proc"] = mimiciv_10["icd10_proc"].apply(
 mimiciv_10["icd10_diag"] = mimiciv_10["icd10_diag"].apply(
     lambda x: [] if x is np.nan else x
 )
+logging.info("Converted NaNs")
 
 mimiciv_9 = filter_codes(mimiciv_9, ["icd9_proc", "icd9_diag"], MIN_TARGET_COUNT)
 mimiciv_10 = filter_codes(mimiciv_10, ["icd10_proc", "icd10_diag"], MIN_TARGET_COUNT)
+logging.info("filter_codes")
 
 # define target
 mimiciv_9[TARGET_COLUMN] = mimiciv_9["icd9_proc"] + mimiciv_9["icd9_diag"]
 mimiciv_10[TARGET_COLUMN] = mimiciv_10["icd10_proc"] + mimiciv_10["icd10_diag"]
+logging.info("TARGET_COLUMN")
 
 # remove empty target
 mimiciv_9 = mimiciv_9[mimiciv_9[TARGET_COLUMN].apply(lambda x: len(x) > 0)]
 mimiciv_10 = mimiciv_10[mimiciv_10[TARGET_COLUMN].apply(lambda x: len(x) > 0)]
+logging.info("Remove empty target")
 
 # reset index
 mimiciv_9 = mimiciv_9.reset_index(drop=True)
 mimiciv_10 = mimiciv_10.reset_index(drop=True)
+logging.info("Reset index")
 
 # Text preprocess the notes
 mimiciv_9 = preprocess_documents(df=mimiciv_9, preprocessor=preprocessor)
+logging.info("Text preprocess 9")
 mimiciv_10 = preprocess_documents(df=mimiciv_10, preprocessor=preprocessor)
+logging.info("Text preprocess 10")
 
 # save files to disk
 mimiciv_9.to_feather(output_dir_icd9 / "mimiciv_icd9.feather")

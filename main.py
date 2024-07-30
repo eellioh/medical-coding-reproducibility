@@ -6,6 +6,7 @@ from pathlib import Path
 import hydra
 from omegaconf import OmegaConf
 from rich.pretty import pprint
+from accelerate import Accelerator, DistributedDataParallelKwargs
 
 from src.data.data_pipeline import data_pipeline
 from src.factories import (
@@ -40,7 +41,7 @@ def deterministic() -> None:
 
 @hydra.main(version_base=None, config_path="configs", config_name="config")
 def main(cfg: OmegaConf) -> None:
-    if cfg.deterministic:
+    if cfg.deterministic: ### Make sure to check the configs (plm_icd.yaml)
         deterministic()
     else:
         import torch
@@ -57,6 +58,7 @@ def main(cfg: OmegaConf) -> None:
             )
 
         else:
+            print("no cuda")
             os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
