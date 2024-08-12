@@ -42,7 +42,7 @@ def get_model(
 ) -> models.BaseModel:
     logging.info("entered get_model")
     model_class = getattr(models, config.name)
-    code.interact(local=locals())
+    #code.interact(local=locals())
     return model_class(text_encoder=text_encoder, **data_info, **config.configs)
 
 

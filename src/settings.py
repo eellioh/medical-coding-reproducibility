@@ -19,7 +19,7 @@ DATA_DIRECTORY_MIMICIII_FULL = OmegaConf.load("configs/data/mimiciii_full.yaml")
 DATA_DIRECTORY_MIMICIII_50 = OmegaConf.load("configs/data/mimiciii_50.yaml").dir
 DATA_DIRECTORY_MIMICIII_CLEAN = OmegaConf.load("configs/data/mimiciii_clean.yaml").dir
 DATA_DIRECTORY_MIMICIV_ICD9 = OmegaConf.load("configs/data/mimiciv_icd9.yaml").dir
-DATA_DIRECTORY_MIMICIV_ICD10 = OmegaConf.load("configs/data/mimiciv_icd10.yaml").dir
+DATA_DIRECTORY_MIMICIV_ICD10 = "~/Documents/Github/PLM-ICD/data/mimic4"
 
 PROJECT = "<your project name>" # this variable is used for genersating plots and tables from wandb
 EXPERIMENT_DIR = "files/"  # Path to the experiment directory. Example: ~/experiments
