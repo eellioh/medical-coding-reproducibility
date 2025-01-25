@@ -1,9 +1,10 @@
+# %%
 import torch
 import torch.nn as nn
 
 from torch.nn.init import xavier_uniform_
 
-
+# %%
 class LabelAttention(nn.Module):
     def __init__(self, input_size: int, projection_size: int, num_classes: int):
         super().__init__()
